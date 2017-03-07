@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void Predictors::read_file(string file)
+void Predictors::read_file(string file) //trace input
 {
 	unsigned long long address;
 	string behavior;
@@ -29,16 +29,16 @@ void Predictors::read_file(string file)
 		ss << address;
 		hex >> temp.address; 
 
-		if(behavior == 'T'){
+		if (behavior == 'T') {
 			temp.prediction = 1; 
-		}else if(behavior == 'NT'){
+		} else if (behavior == 'NT') {
 			temp.prediction = 0;
-		}else{
-			cerr << "Undefined branch input\n";
+		} else {
+			cerr << "Undefined branch input.\n";
 			exit(1); //abort
 		}
 
-		input.push_back(temp); //store
+		input.push_back(temp); //store values
 	}
 
 	infile.close();
@@ -49,16 +49,20 @@ void Predictors::write_file(string file) //output.txt
 
 	ofstream outfile(file.c_str());
 
-	if(infile == NULL){
-		cerr << "CAN'T OPEN FILE: " << file << endl;
+	if(outfile == NULL){
+		cerr << "Unable to open file: " << file << endl;
 		exit(1);
 	}
 
-	for(unsigned long long i = 0; i < 6; i++) //loop through output array
+	for(unsigned long long i = 0; i < 26; i++) //loop through output array
 	{
-
+		outfile << output[i].num_correct << ", " << num_branches << "; ";
+		
+		if(i == 0 || i == 1 || i == 8 || i == 15 || i == 24)
+			outfile << endl; //seperate based on which predictor
 	}
 
+	outfile << endl;
 	outfile.close();
 }
 
