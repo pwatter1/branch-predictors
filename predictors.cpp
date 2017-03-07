@@ -1,3 +1,5 @@
+/* predictors.cpp */
+
 #include "predictors.h"
 
 using namespace std;
@@ -21,10 +23,11 @@ void Predictors::read_file(string file)
 		num_branches++;
 
 		stringstream ss; //string builder
-		input temp;
-s
+		_input temp;
+
 		address = address.substr(2); //last two counter bits
 		ss << address;
+		hex >> temp.address; 
 
 		if(behavior == 'T'){
 			temp.prediction = 1; 
@@ -34,17 +37,41 @@ s
 			cerr << "Undefined branch input\n";
 			exit(1); //abort
 		}
+
+		input[0] = temp; //store
 	}
 
 	infile.close()
 }
 
-
-void Predictors::write_file()
+void Predictors::write_file(string file) //output.txt
 {
-	//output file
 
-	ifstream infile(file.c_str());
-	if(infile == NULL)
+	ofstream outfile(file.c_str());
 
+	if(infile == NULL){
+		cerr << "CAN'T OPEN FILE: " << file << endl;
+		exit(1);
+	}
+
+	for(int i = 0; i < 6; i++) //loop through output array
+	{
+
+	}
+}
+
+void Predictors::always_taken()
+{
+	unsigned long long count = 0;
+
+	for(int i = 0; i < _input.size(); i++)
+	{
+		if(_input.prediction == 1)
+			count++;
+	}
+
+	_output temp;
+	temp.num_correct = count;
+	temp.prediction = "Taken";
+	output[0] = temp;
 }

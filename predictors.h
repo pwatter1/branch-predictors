@@ -1,3 +1,5 @@
+/* predictors.h */
+
 #ifndef PREDICTORS_H
 #define PREDICTORS_H
 
@@ -26,7 +28,7 @@ class Predictor
 {
 	private:
 		long long num_branches;
-		
+
 		// declare array of structs 
 		// to contain each predictor's data
 		struct _input input[6];
