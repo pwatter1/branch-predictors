@@ -14,20 +14,20 @@ using namespace std;
 struct _input 
 {
 	unsigned long long address;
-	unsigned int prediction;
+	unsigned int prediction; // NT or T
 }
 
 struct _output
 {
 	unsigned long long num_correct;
-	string prediction;
+	string prediction; // Taken or Not Taken
 }
 
 
 class Predictor
 {
 	private:
-		long long num_branches;
+		unsigned long long num_branches;
 
 		// declare array of structs 
 		// to contain each predictor's data
@@ -37,6 +37,9 @@ class Predictor
 	public:
 		void read_file(string file);
 		void write_file(string file);
+
+		void always_taken();
+		void not_always_taken();
 };
 
 
