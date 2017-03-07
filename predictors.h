@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <stdlib.h>
 
 using namespace std;
@@ -15,22 +16,23 @@ struct _input
 {
 	unsigned long long address;
 	unsigned int prediction; // NT or T
-}
+};
 
 struct _output
 {
 	unsigned long long num_correct;
-	string prediction; // Taken or Not Taken
-}
+	string prediction; // "Taken" or "Not Always Taken"
+};
 
 
-class Predictor
+class Predictors
 {
 	private:
 		unsigned long long num_branches;
 
 		vector<_input> input;
-		struct _output output[6]; 
+		// array with each predictor and it's variations
+		struct _output output[26]; 
 
 	public:
 		void read_file(string file);

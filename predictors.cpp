@@ -2,11 +2,13 @@
 
 #include "predictors.h"
 
+#include <string>
+
 using namespace std;
 
 void Predictors::read_file(string file) //trace input
 {
-	unsigned long long address;
+	string address;
 	string behavior;
 
 	ifstream infile(file.c_str());
@@ -27,11 +29,11 @@ void Predictors::read_file(string file) //trace input
 
 		address = address.substr(2); //last two counter bits
 		ss << address;
-		hex >> temp.address; 
+		ss >> hex >> temp.address; 
 
-		if (behavior == 'T') {
+		if (behavior.compare("T")) {
 			temp.prediction = 1; 
-		} else if (behavior == 'NT') {
+		} else if (behavior.compare("NT")) {
 			temp.prediction = 0;
 		} else {
 			cerr << "Undefined branch input.\n";
@@ -70,8 +72,8 @@ void Predictors::always_taken()
 {
 	unsigned long long count = 0;
 
-	for(unsigned long long i = 0; i < _input.size(); i++){
-		if(_input.prediction == 1)
+	for(unsigned long long i = 0; i < input.size(); i++){
+		if(input[i].prediction == 1)
 			count++;
 	}
 
@@ -81,12 +83,12 @@ void Predictors::always_taken()
 	output[0] = temp;
 }
 
-void not_always_taken()
+void Predictors::not_always_taken()
 {
 	unsigned long long count = 0;
 
-	for(unsigned long long i = 0; i < _input.size(); i++){
-		if(_input.prediction == 0)
+	for(unsigned long long i = 0; i < input.size(); i++){
+		if(input[i].prediction == 0)
 			count++;
 	}
 
@@ -95,3 +97,4 @@ void not_always_taken()
 	temp.prediction = "Always Not Taken";
 	output[1] = temp;
 }
+
