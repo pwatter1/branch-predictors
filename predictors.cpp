@@ -64,14 +64,38 @@ void Predictors::always_taken()
 {
 	unsigned long long count = 0;
 
-	for(int i = 0; i < _input.size(); i++)
-	{
+	for(unsigned long long i = 0; i < _input.size(); i++){
 		if(_input.prediction == 1)
 			count++;
 	}
 
 	_output temp;
 	temp.num_correct = count;
-	temp.prediction = "Taken";
+	temp.prediction = "Always Taken";
 	output[0] = temp;
+}
+
+void not_always_taken()
+{
+	unsigned long long count = 0;
+
+	for(unsigned long long i = 0; i < _input.size(); i++){
+		if(_input.prediction == 0)
+			count++;
+	}
+
+	_output temp;
+	temp.num_correct = count;
+	temp.prediction = "Always Not Taken";
+	output[1] = temp;
+}
+
+void bimodial_single_bit()
+{
+
+}
+	
+void bimodial_double_bit()
+{
+
 }
