@@ -1,4 +1,4 @@
-/* predictors.h */
+/* Predictors.h */
 
 #ifndef PREDICTORS_H
 #define PREDICTORS_H
@@ -29,9 +29,7 @@ class Predictor
 	private:
 		unsigned long long num_branches;
 
-		// declare array of structs 
-		// to contain each predictor's data
-		struct _input input[6];
+		vector<_input> input;
 		struct _output output[6]; 
 
 	public:
@@ -40,6 +38,8 @@ class Predictor
 
 		void always_taken();
 		void not_always_taken();
+		//void bimodial_single_bit();
+		//void bimodial_double_bit();
 };
 
 

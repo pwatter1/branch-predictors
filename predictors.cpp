@@ -1,4 +1,4 @@
-/* predictors.cpp */
+/* Predictors.cpp */
 
 #include "predictors.h"
 
@@ -9,15 +9,15 @@ void Predictors::read_file(string file)
 	unsigned long long address;
 	string behavior;
 
-	ifstream infile(file.c_str()) 
+	ifstream infile(file.c_str());
 
 	if(infile == NULL){
-		cerr << "CAN'T OPEN FILE: " << file << endl; 
-		exit(1);
+		cerr << "Unable to open file: " << file << endl; 
+		exit(1); //abort
 	}
 
 	// The following loop will read a hexadecimal # 
-	// and a string each time and then output them
+	// as well as a string each time, then output them
 	while(infile >> hex >> address >> behavior)
 	{
 		num_branches++;
@@ -38,10 +38,10 @@ void Predictors::read_file(string file)
 			exit(1); //abort
 		}
 
-		input[0] = temp; //store
+		input.push_back(temp); //store
 	}
 
-	infile.close()
+	infile.close();
 }
 
 void Predictors::write_file(string file) //output.txt
@@ -54,10 +54,12 @@ void Predictors::write_file(string file) //output.txt
 		exit(1);
 	}
 
-	for(int i = 0; i < 6; i++) //loop through output array
+	for(unsigned long long i = 0; i < 6; i++) //loop through output array
 	{
 
 	}
+
+	outfile.close();
 }
 
 void Predictors::always_taken()
@@ -88,14 +90,4 @@ void not_always_taken()
 	temp.num_correct = count;
 	temp.prediction = "Always Not Taken";
 	output[1] = temp;
-}
-
-void bimodial_single_bit()
-{
-
-}
-	
-void bimodial_double_bit()
-{
-
 }
