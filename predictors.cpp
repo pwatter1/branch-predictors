@@ -28,7 +28,7 @@ void Predictors::read_file(string file) //trace input
 
 		address = address.substr(2); //last two counter bits
 		ss << address;
-		//ss >> hex >> temp.address; 
+		ss >> hex >> temp.address; 
 
 		if (behavior == "T") {
 			temp.prediction = 1; 
@@ -97,12 +97,31 @@ void Predictors::not_always_taken()
 	output[1] = temp;
 }
 
-void Predictors::bimodial_single_bit() //table size?
+void Predictors::bimodial_single_bit(int* tables) 
 {
 	unsigned long long count = 0;
+	int initial_state_prediction = 1; // T
 
-	for(unsigned long long i = 0; i < input.size(); i++){
+	for(int i = 0; i < 7; i++) // loop through each table size
+	{
+		
 
+
+
+		_output temp;
+		temp.num_correct = count;
+		count = 0; // reset 
+		temp.prediction = "Bimodial Single Bit";
+		output[i] = temp;
 	}
 
 }
+
+
+/* hw
+math - none
+301 - paper organized outline
+	- presentation
+
+320 - project
+240 - none
