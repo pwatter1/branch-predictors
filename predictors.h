@@ -40,7 +40,7 @@ class Predictors
 
 		void always_taken();
 		void not_always_taken();
-		//void bimodial_single_bit();
+		void bimodial_single_bit();
 		//void bimodial_double_bit();
 };
 
