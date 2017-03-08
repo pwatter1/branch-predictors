@@ -2,14 +2,13 @@
 
 #include "predictors.h"
 
-#include <string>
-
 using namespace std;
 
 void Predictors::read_file(string file) //trace input
 {
 	string address;
 	string behavior;
+	num_branches = 0;
 
 	ifstream infile(file.c_str());
 
@@ -29,11 +28,11 @@ void Predictors::read_file(string file) //trace input
 
 		address = address.substr(2); //last two counter bits
 		ss << address;
-		ss >> hex >> temp.address; 
+		//ss >> hex >> temp.address; 
 
-		if (behavior.compare("T")) {
+		if (behavior == "T") {
 			temp.prediction = 1; 
-		} else if (behavior.compare("NT")) {
+		} else if (behavior == "NT") {
 			temp.prediction = 0;
 		} else {
 			cerr << "Undefined branch input.\n";
@@ -98,3 +97,12 @@ void Predictors::not_always_taken()
 	output[1] = temp;
 }
 
+void Predictors::bimodial_single_bit() //table size?
+{
+	unsigned long long count = 0;
+
+	for(unsigned long long i = 0; i < input.size(); i++){
+
+	}
+
+}
