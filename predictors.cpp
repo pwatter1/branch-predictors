@@ -47,7 +47,6 @@ void Predictors::read_file(string file) //trace input
 
 void Predictors::write_file(string file) //output.txt
 {
-
 	ofstream outfile(file.c_str());
 
 	if(outfile == NULL){
@@ -104,15 +103,17 @@ void Predictors::bimodial_single_bit(int* tables)
 
 	for(int i = 0; i < 7; i++) // loop through each table size
 	{
-		
-
-
+		for(unsigned long long i = 0; i < input.size(); i++){
+			tables[i]  // something something compare initial state
+		}
 
 		_output temp;
 		temp.num_correct = count;
 		count = 0; // reset 
 		temp.prediction = "Bimodial Single Bit";
 		output[i] = temp;
+
+
 	}
 
 }
