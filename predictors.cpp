@@ -173,12 +173,12 @@ void Predictors::bimodial_double_bit()
 				if(tables[i][index] != 3)
 					tables[i][index]++;
 
-			}else if(tables[i][index] < 1 && input[j].prediction == 0){ //correct
+			}else if(tables[i][index] < 2 && input[j].prediction == 0){ //correct
 				count++;
 				if(tables[i][index] != 0)
 					tables[i][index]--;
 			
-			}else if(tables[i][index] < 1 && input[j].prediction == 1){ // wrong
+			}else if(tables[i][index] < 2 && input[j].prediction == 1){ // wrong
 				tables[i][index]++;
 
 			}else if(tables[i][index] > 1 && input[j].prediction == 0){ // wrong
@@ -195,6 +195,34 @@ void Predictors::bimodial_double_bit()
 	}
 }
 
+void Predictors::gshare()
+{
+	unsigned long long count = 0;
+	int initial_state_prediction = 3; //TT
+	int table[2048];
+
+	for (int i = 0; i < 7; i++) //loop through tables
+	{
+		for(int j = 0; j < table_sizes[i]; j++)
+			tables[i][j] = initial_state_prediction; //set all to initial
+
+		for(unsigned long long j = 0; j < input.size(); j++)
+		{
+			int index = input[j].address % table_sizes[i];
+
+
+		}
+
+		_output temp;
+		temp.num_correct = count; 
+		temp.prediction = "Bimodial Double Bit";
+		output.push_back(temp);
+
+		count = 0; //reset
+	}
+
+
+}
 /* 
 gshare 
 mod address by table size
