@@ -20,8 +20,7 @@ struct _input
 
 struct _output
 {
-	unsigned long long num_correct;
-	string prediction; // "Taken" or "Not Always Taken"
+	unsigned long long num_correct; //use index to tell which predictor
 };
 
 
@@ -42,6 +41,8 @@ class Predictors
 		void not_always_taken();
 		void bimodial_single_bit();
 		void bimodial_double_bit(); // 00 01 10 11
+
+		void gshare();
 };
 
 
