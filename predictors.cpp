@@ -78,7 +78,7 @@ void Predictors::always_taken()
 	_output temp;
 	temp.num_correct = count;
 	temp.prediction = "Always Taken";
-	output[0] = temp;
+	output.push_back(temp);
 }
 
 void Predictors::not_always_taken()
@@ -93,7 +93,7 @@ void Predictors::not_always_taken()
 	_output temp;
 	temp.num_correct = count;
 	temp.prediction = "Always Not Taken";
-	output[1] = temp;
+	output.push_back(temp);
 }
 
 void Predictors::bimodial_single_bit() 
@@ -114,19 +114,28 @@ void Predictors::bimodial_single_bit()
 
 	for(int i = 0; i < 7; i++) // loop through each table size
 	{
+		for(int j = 0; j < table_sizes[i]; j++)
+			tables[i][j] = initial_state_prediction; //set all to initial
+	
 		for(unsigned long long j = 0; j < input.size(); j++)
 		{
-			int index = input.address % table_sizes[i];
-			tables[i][index] = initial_state_prediction;
+			int index = input[j].address % table_sizes[i];
 			
-			if(tables[i][index] == input[j].prediction)
+			if(tables[i][index] == 1 && input[j].prediction == 1){
 				count++;
-		}
+			}else if(tables[i][index] == 1 && input[j].prediction == 0){
+				tables[i][index]--;
+			}else if(tables[i][index] == 0 && input[j].prediction == 0){
+				count++;
+			}else if(tables[i][index] == 0 && input[j].prediction == 1){
+				tables[i][index]++;
+			}
+		}		
 
 		_output temp;
 		temp.num_correct = count; 
 		temp.prediction = "Bimodial Single Bit";
-		output[i] = temp;
+		output.push_back(temp);
 
 		count = 0; //reset
 	}
@@ -152,10 +161,12 @@ void Predictors::bimodial_double_bit()
 
 	for (int i = 0; i < 7; i++) //loop through tables
 	{
+		for(int j = 0; j < table_sizes[i]; j++)
+			tables[i][j] = initial_state_prediction; //set all to initial
+
 		for(unsigned long long j = 0; j < input.size(); j++)
 		{
-			int index = input.address % table_sizes[i];
-			tables[i][index] = initial_state_prediction;
+			int index = input[j].address % table_sizes[i];
 
 			if(tables[i][index] > 1 && input[j].prediction == 1){       //correct
 				count++; 
@@ -178,7 +189,7 @@ void Predictors::bimodial_double_bit()
 		_output temp;
 		temp.num_correct = count; 
 		temp.prediction = "Bimodial Double Bit";
-		output[i] = temp;
+		output.push_back(temp);
 
 		count = 0; //reset
 	}
