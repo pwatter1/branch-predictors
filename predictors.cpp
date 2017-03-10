@@ -1,7 +1,6 @@
 /* Predictors.cpp */
 
 #include "predictors.h"
-#include <unordered_map>
 
 using namespace std;
 
@@ -97,18 +96,21 @@ void Predictors::not_always_taken()
 	output[1] = temp;
 }
 
-void Predictors::bimodial_single_bit(int* tables) 
+void Predictors::bimodial_single_bit() 
 {
 	unsigned long long count = 0;
 	int initial_state_prediction = 1; // T
 	int table_sizes = {16, 32, 128, 256, 512, 1024, 2048};
+
+	tables[][] = {int[16], int[32],	int[128], int[256], 
+					int[512], int[1024], int[2048]};
 
 	for(int i = 0; i < 7; i++) // loop through each table size
 	{
 		for(unsigned long long i = 0; i < input.size(); i++)
 		{
 			int index = input.address % table_sizes[i];
-			tables[index] = initial_state_prediction;
+			tables[i][index] = initial_state_prediction;
 			
 			if(tables[index] == input.prediction)
 				count++;
@@ -125,7 +127,8 @@ void Predictors::bimodial_single_bit(int* tables)
 }
 
 
-/* hw
+/* 
+hw
 math - none
 301 - paper organized outline
 	- presentation
@@ -133,6 +136,7 @@ math - none
 320 - project
 240 - none
 
-// gshare 
+gshare 
 mod address by table size
 then xor by global something 
+*/
