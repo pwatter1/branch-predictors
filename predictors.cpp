@@ -202,42 +202,41 @@ void Predictors::gshare()
 	int table[2048];
 	unsigned char* global_history_register[9]; //3bit to 11bit masks
 
-	global_history_register[0] = 0x1;   //3bit
-	global_history_register[1] = 0x1;   //4bit
-	global_history_register[2] = 0x01;  //5bit
-	global_history_register[3] = 0x01;  //6bit
-	global_history_register[4] = 0x01;  //7bit
-	global_history_register[5] = 0x01;  //8bit
-	global_history_register[6] = 0x001; //9bit
-	global_history_register[7] = 0x001; //10bit
-	global_history_register[8] = 0x001; //11bit
+	global_history_register[0] = 0x0;   //3bit
+	global_history_register[1] = 0x0;   //4bit
+	global_history_register[2] = 0x00;  //5bit
+	global_history_register[3] = 0x00;  //6bit
+	global_history_register[4] = 0x00;  //7bit
+	global_history_register[5] = 0x00;  //8bit
+	global_history_register[6] = 0x000; //9bit
+	global_history_register[7] = 0x000; //10bit
+	global_history_register[8] = 0x000; //11bit
 
-	for (int i = 0; i < 7; i++) //loop through tables
+	for (int i = 0; i < 9; i++) //loop through GHR
 	{
-		for(int j = 0; j < table_sizes[i]; j++)
-			tables[i][j] = initial_state_prediction; //set all to initial
+		for(int j = 0; j < 2048; j++)
+			table[i] = initial_state_prediction; //set all to initial
 
 		for(unsigned long long j = 0; j < input.size(); j++)
 		{
 			//branch address and the global history are hashed together
-			int index = (input[j].address ^ ) % 2048;
+			int index = ((input[j].address ^ global_history_register[i]) % 2048);
 
-
-			if(tables[i][index] > 1 && input[j].prediction == 1){       //correct
+			if(table[index] > 1 && input[j].prediction == 1){       //correct
 				count++; 
-				if(tables[i][index] != 3)
-					tables[i][index]++;
+				if(table[index] != 3)
+					table[index]++;
 
-			}else if(tables[i][index] < 2 && input[j].prediction == 0){ //correct
+			}else if(table[index] < 2 && input[j].prediction == 0){ //correct
 				count++;
-				if(tables[i][index] != 0)
-					tables[i][index]--;
+				if(table[index] != 0)
+					table[index]--;
 			
-			}else if(tables[i][index] < 2 && input[j].prediction == 1){ // wrong
-				tables[i][index]++;
+			}else if(table[index] < 2 && input[j].prediction == 1){ // wrong
+				table[index]++;
 
-			}else if(tables[i][index] > 1 && input[j].prediction == 0){ // wrong
-				tables[i][index]--;
+			}else if(table[index] > 1 && input[j].prediction == 0){ // wrong
+				table[index]--;
 			}	
 		}
 
