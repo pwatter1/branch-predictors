@@ -56,7 +56,7 @@ void Predictors::write_file(string file) //output.txt
 
 	for(unsigned long long i = 0; i < 26; i++) //loop through output array
 	{
-		outfile << output[i].num_correct << ", " << num_branches << "; ";
+		outfile << output[i].num_correct << "," << num_branches << "; ";
 		
 		if(i == 0 || i == 1 || i == 8 || i == 15 || i == 24)
 			outfile << endl; //seperate based on which predictor
@@ -77,7 +77,6 @@ void Predictors::always_taken()
 
 	_output temp;
 	temp.num_correct = count;
-	temp.prediction = "Always Taken";
 	output.push_back(temp);
 }
 
@@ -92,7 +91,6 @@ void Predictors::not_always_taken()
 
 	_output temp;
 	temp.num_correct = count;
-	temp.prediction = "Always Not Taken";
 	output.push_back(temp);
 }
 
@@ -134,7 +132,6 @@ void Predictors::bimodial_single_bit()
 
 		_output temp;
 		temp.num_correct = count; 
-		temp.prediction = "Bimodial Single Bit";
 		output.push_back(temp);
 
 		count = 0; //reset
@@ -188,7 +185,6 @@ void Predictors::bimodial_double_bit()
 
 		_output temp;
 		temp.num_correct = count; 
-		temp.prediction = "Bimodial Double Bit";
 		output.push_back(temp);
 
 		count = 0; //reset
@@ -198,7 +194,7 @@ void Predictors::bimodial_double_bit()
 void Predictors::gshare()
 {
 	unsigned long long count = 0;
-	int initial_state_prediction = 3; //TT
+	int initial_state_prediction = 3; //TT - (00) = 0 (01) = 1 (10) = 2 (11) = 3
 	int table[2048];
 	unsigned long long global_history_register[9]; //3bit to 11bit masks
 
@@ -215,7 +211,7 @@ void Predictors::gshare()
 	for (int i = 0; i < 9; i++) //loop through GHR
 	{
 		for(int j = 0; j < 2048; j++)
-			table[i] = initial_state_prediction; //set all to initial
+			table[i] = initial_state_prediction; //set all to initial state
 
 		for(unsigned long long j = 0; j < input.size(); j++)
 		{
@@ -242,7 +238,6 @@ void Predictors::gshare()
 
 		_output temp;
 		temp.num_correct = count; 
-		temp.prediction = "Bimodial Double Bit";
 		output.push_back(temp);
 
 		count = 0; //reset
@@ -250,8 +245,3 @@ void Predictors::gshare()
 
 
 }
-/* 
-gshare 
-mod address by table size
-then xor by global something 
-*/
