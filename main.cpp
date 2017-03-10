@@ -21,6 +21,8 @@ int main(int argc, char **argv)
 	predictor.bimodial_single_bit();
 	predictor.bimodial_double_bit();
 
+	//predictor.gshare();
+
 	predictor.write_file(argv[2]);
 
 	cout << "Success - output.txt written.\n";
