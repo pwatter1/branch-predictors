@@ -3,6 +3,7 @@
 #include "predictors.h"
 
 using namespace std;
+#include <map>
 
 int main(int argc, char **argv)
 {
@@ -16,11 +17,8 @@ int main(int argc, char **argv)
 	predictor.read_file(argv[1]);
 	predictor.always_taken();
 	predictor.not_always_taken();
-
-	int* tables = { new int[16],  new int[32],  new int[128], 
-					new int[256], new int[512],	new int[1024], new int[2048] }
 	
-	predictor.bimodial_single_bit(tables);
+	predictor.bimodial_single_bit();
 	//predictor.bimodial_double_bit(tables);
 
 	predictor.write_file(argv[2]);

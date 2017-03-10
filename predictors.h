@@ -30,7 +30,7 @@ class Predictors
 	private:
 		unsigned long long num_branches;
 
-		vector<_input> input;
+		vector<_input> input; 
 		// array with each predictor and it's variations
 		struct _output output[26]; 
 
@@ -41,7 +41,7 @@ class Predictors
 		void always_taken();
 		void not_always_taken();
 		void bimodial_single_bit();
-		//void bimodial_double_bit();
+		//void bimodial_double_bit(); // 00 01 10 11
 };
 
 
