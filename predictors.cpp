@@ -200,7 +200,7 @@ void Predictors::gshare()
 	unsigned long long count = 0;
 	int initial_state_prediction = 3; //TT
 	int table[2048];
-	unsigned char* global_history_register[9]; //3bit to 11bit masks
+	unsigned long long global_history_register[9]; //3bit to 11bit masks
 
 	global_history_register[0] = 0x0;   //3bit
 	global_history_register[1] = 0x0;   //4bit
