@@ -100,19 +100,19 @@ void Predictors::bimodial_single_bit()
 {
 	unsigned long long count = 0;
 	int initial_state_prediction = 1; // T
-	int table_sizes = {16, 32, 128, 256, 512, 1024, 2048};
+	unsigned long long *table_sizes[] = new table_sizes(16, 32, 128, 256, 512, 1024, 2048);
 
-	tables[][] = {int[16], int[32],	int[128], int[256], 
-					int[512], int[1024], int[2048]};
+	unsigned long long *tables[][] = {int[16], int[32],	int[128], int[256], 
+									  int[512], int[1024], int[2048]};
 
 	for(int i = 0; i < 7; i++) // loop through each table size
 	{
-		for(unsigned long long i = 0; i < input.size(); i++)
+		for(unsigned long long j = 0; j < input.size(); j++)
 		{
 			int index = input.address % table_sizes[i];
 			tables[i][index] = initial_state_prediction;
 			
-			if(tables[index] == input.prediction)
+			if(tables[i][index] == input.prediction)
 				count++;
 		}
 
@@ -126,16 +126,50 @@ void Predictors::bimodial_single_bit()
 
 }
 
+void Predictors::bimodial_double_bit()
+{
+	unsigned long long count;
+	int initial_state_prediction = 3; //TT
+	// 00 = 0 01 = 1 10 = 2 11 = 3
+
+	for (int i = 0; i < 7; i++) //loop through tables
+	{
+		for(unsigned long long j = 0; j < input.size(); j++)
+		{
+			int index = input.address % table_sizes[i];
+			tables[i][index] = initial_state_prediction;
+
+			if(tables[i][index] > 1 && input.prediction == 1){ 
+				count++; 
+				if(tables[i][index] != 3)
+					tables[i][index]++;
+
+			}else if(tables[i][index] < 1 && input.prediction == 0){
+				count++;
+				if(tables[i][index] != 0)
+					tables[i][index]--;
+			
+			}else if(tables[i][index] < 1 && input.prediction == 1){ 
+				if(tables[i][index] != 0)
+					tables[i][index]--;
+
+			}else if(tables[i][index] > 1 && input.prediction == 0){ 
+				if(tables[i][index] != 0)
+					tables[i][index]--;
+			}	
+		}
+
+		_output temp;
+		temp.num_correct = count; 
+		temp.prediction = "Bimodial Single Bit";
+		output[i] = temp;
+
+		count = 0; //reset
+
+	}
+}
 
 /* 
-hw
-math - none
-301 - paper organized outline
-	- presentation
-
-320 - project
-240 - none
-
 gshare 
 mod address by table size
 then xor by global something 
