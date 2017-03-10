@@ -6,19 +6,18 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <vector>
 #include <stdlib.h>
 
 using namespace std;
 
-struct _input 
+struct in_put 
 {
 	unsigned long long address;
 	unsigned int prediction; // NT or T
 };
 
-struct _output
+struct out_put
 {
 	unsigned long long num_correct; //use index to tell which predictor
 };
@@ -28,10 +27,8 @@ class Predictors
 {
 	private:
 		unsigned long long num_branches;
-
-		vector<_input> input; 
-		// array with each predictor and it's variations
-		vector<_output> output; 
+		vector<in_put> input; 
+		vector<out_put> output; 
 
 	public:
 		void read_file(string file);
@@ -39,10 +36,13 @@ class Predictors
 
 		void always_taken();
 		void not_always_taken();
+
 		void bimodial_single_bit();
 		void bimodial_double_bit(); // 00 01 10 11
 
 		void gshare();
+
+		//void tournament();
 };
 
 

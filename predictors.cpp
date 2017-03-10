@@ -24,7 +24,7 @@ void Predictors::read_file(string file) //trace input
 		num_branches++;
 
 		stringstream ss; //string builder
-		_input temp;
+		in_put temp;
 
 		address = address.substr(2); //last two counter bits
 		ss << address;
@@ -54,12 +54,12 @@ void Predictors::write_file(string file) //output.txt
 		exit(1);
 	}
 
-	for(unsigned long long i = 0; i < 26; i++) //loop through output array
+	for(unsigned long long i = 0; i < 26; i++) //loop through output vector
 	{
 		outfile << output[i].num_correct << "," << num_branches << "; ";
 		
 		if(i == 0 || i == 1 || i == 8 || i == 15 || i == 24)
-			outfile << endl; //seperate based on which predictor
+			outfile << endl; //seperate based on predictor
 	}
 
 	outfile << endl;
@@ -75,7 +75,7 @@ void Predictors::always_taken()
 			count++;
 	}
 
-	_output temp;
+	out_put temp;
 	temp.num_correct = count;
 	output.push_back(temp);
 }
@@ -89,7 +89,7 @@ void Predictors::not_always_taken()
 			count++;
 	}
 
-	_output temp;
+	out_put temp;
 	temp.num_correct = count;
 	output.push_back(temp);
 }
@@ -130,7 +130,7 @@ void Predictors::bimodial_single_bit()
 			}
 		}		
 
-		_output temp;
+		out_put temp;
 		temp.num_correct = count; 
 		output.push_back(temp);
 
@@ -183,7 +183,7 @@ void Predictors::bimodial_double_bit()
 			}	
 		}
 
-		_output temp;
+		out_put temp;
 		temp.num_correct = count; 
 		output.push_back(temp);
 
@@ -216,6 +216,7 @@ void Predictors::gshare()
 		for(unsigned long long j = 0; j < input.size(); j++)
 		{
 			//branch address and the global history are hashed together
+			//mod size of table to grab appropriate number of bits
 			int index = ((input[j].address ^ global_history_register[i]) % 2048);
 
 			if(table[index] > 1 && input[j].prediction == 1){       //correct
@@ -236,7 +237,7 @@ void Predictors::gshare()
 			}	
 		}
 
-		_output temp;
+		out_put temp;
 		temp.num_correct = count; 
 		output.push_back(temp);
 

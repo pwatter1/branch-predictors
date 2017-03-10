@@ -15,13 +15,13 @@ int main(int argc, char **argv)
 	Predictors predictor; //initialize object
 
 	predictor.read_file(argv[1]);
+
 	predictor.always_taken();
 	predictor.not_always_taken();
-	
 	predictor.bimodial_single_bit();
 	predictor.bimodial_double_bit();
-
-	//predictor.gshare();
+	predictor.gshare();
+	//predictor.tournament();
 
 	predictor.write_file(argv[2]);
 
