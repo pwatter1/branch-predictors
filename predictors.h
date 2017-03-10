@@ -32,7 +32,7 @@ class Predictors
 
 		vector<_input> input; 
 		// array with each predictor and it's variations
-		struct _output output[26]; 
+		vector<_output> output; 
 
 	public:
 		void read_file(string file);
@@ -41,7 +41,7 @@ class Predictors
 		void always_taken();
 		void not_always_taken();
 		void bimodial_single_bit();
-		//void bimodial_double_bit(); // 00 01 10 11
+		void bimodial_double_bit(); // 00 01 10 11
 };
 
 

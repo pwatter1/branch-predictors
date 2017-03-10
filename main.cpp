@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	predictor.not_always_taken();
 	
 	predictor.bimodial_single_bit();
-	//predictor.bimodial_double_bit(tables);
+	predictor.bimodial_double_bit();
 
 	predictor.write_file(argv[2]);
 
