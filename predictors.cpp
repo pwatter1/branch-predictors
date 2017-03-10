@@ -102,8 +102,7 @@ void Predictors::bimodial_single_bit()
 	int initial_state_prediction = 1; // T
 	unsigned long long *table_sizes[] = new table_sizes(16, 32, 128, 256, 512, 1024, 2048);
 
-	unsigned long long *tables[][] = {int[16], int[32],	int[128], int[256], 
-									  int[512], int[1024], int[2048]};
+	unsigned long long *tables[][] = {int[16], int[32],	int[128], int[256], int[512], int[1024], int[2048]};
 
 	for(int i = 0; i < 7; i++) // loop through each table size
 	{
@@ -128,9 +127,13 @@ void Predictors::bimodial_single_bit()
 
 void Predictors::bimodial_double_bit()
 {
-	unsigned long long count;
+	unsigned long long count = 0;
 	int initial_state_prediction = 3; //TT
 	// 00 = 0 01 = 1 10 = 2 11 = 3
+
+	unsigned long long *table_sizes[] = new table_sizes(16, 32, 128, 256, 512, 1024, 2048);
+
+	unsigned long long *tables[][] = {int[16], int[32],	int[128], int[256], int[512], int[1024], int[2048]};
 
 	for (int i = 0; i < 7; i++) //loop through tables
 	{
@@ -139,23 +142,21 @@ void Predictors::bimodial_double_bit()
 			int index = input.address % table_sizes[i];
 			tables[i][index] = initial_state_prediction;
 
-			if(tables[i][index] > 1 && input.prediction == 1){ 
+			if(tables[i][index] > 1 && input.prediction == 1){       //correct
 				count++; 
 				if(tables[i][index] != 3)
 					tables[i][index]++;
 
-			}else if(tables[i][index] < 1 && input.prediction == 0){
+			}else if(tables[i][index] < 1 && input.prediction == 0){ //correct
 				count++;
 				if(tables[i][index] != 0)
 					tables[i][index]--;
 			
-			}else if(tables[i][index] < 1 && input.prediction == 1){ 
-				if(tables[i][index] != 0)
-					tables[i][index]--;
+			}else if(tables[i][index] < 1 && input.prediction == 1){ // wrong
+				tables[i][index]++;
 
-			}else if(tables[i][index] > 1 && input.prediction == 0){ 
-				if(tables[i][index] != 0)
-					tables[i][index]--;
+			}else if(tables[i][index] > 1 && input.prediction == 0){ // wrong
+				tables[i][index]--;
 			}	
 		}
 
@@ -165,7 +166,6 @@ void Predictors::bimodial_double_bit()
 		output[i] = temp;
 
 		count = 0; //reset
-
 	}
 }
 
