@@ -200,6 +200,17 @@ void Predictors::gshare()
 	unsigned long long count = 0;
 	int initial_state_prediction = 3; //TT
 	int table[2048];
+	unsigned char* global_history_register[9]; //3bit to 11bit masks
+
+	global_history_register[0] = 0x1;   //3bit
+	global_history_register[1] = 0x1;   //4bit
+	global_history_register[2] = 0x01;  //5bit
+	global_history_register[3] = 0x01;  //6bit
+	global_history_register[4] = 0x01;  //7bit
+	global_history_register[5] = 0x01;  //8bit
+	global_history_register[6] = 0x001; //9bit
+	global_history_register[7] = 0x001; //10bit
+	global_history_register[8] = 0x001; //11bit
 
 	for (int i = 0; i < 7; i++) //loop through tables
 	{
@@ -208,9 +219,26 @@ void Predictors::gshare()
 
 		for(unsigned long long j = 0; j < input.size(); j++)
 		{
-			int index = input[j].address % table_sizes[i];
+			//branch address and the global history are hashed together
+			int index = (input[j].address ^ ) % 2048;
 
 
+			if(tables[i][index] > 1 && input[j].prediction == 1){       //correct
+				count++; 
+				if(tables[i][index] != 3)
+					tables[i][index]++;
+
+			}else if(tables[i][index] < 2 && input[j].prediction == 0){ //correct
+				count++;
+				if(tables[i][index] != 0)
+					tables[i][index]--;
+			
+			}else if(tables[i][index] < 2 && input[j].prediction == 1){ // wrong
+				tables[i][index]++;
+
+			}else if(tables[i][index] > 1 && input[j].prediction == 0){ // wrong
+				tables[i][index]--;
+			}	
 		}
 
 		_output temp;
