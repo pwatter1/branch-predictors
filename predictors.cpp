@@ -100,9 +100,17 @@ void Predictors::bimodial_single_bit()
 {
 	unsigned long long count = 0;
 	int initial_state_prediction = 1; // T
-	unsigned long long *table_sizes[] = new table_sizes(16, 32, 128, 256, 512, 1024, 2048);
+	
+	int table_sizes[7] = {16, 32, 128, 256, 512, 1024, 2048};
 
-	unsigned long long *tables[][] = {int[16], int[32],	int[128], int[256], int[512], int[1024], int[2048]};
+	int* tables[7];
+	tables[0] = new int[16];
+	tables[1] = new int[32];
+	tables[2] = new int[128];
+	tables[3] = new int[256];
+	tables[4] = new int[512];
+	tables[5] = new int[1024];
+	tables[6] = new int[2048];
 
 	for(int i = 0; i < 7; i++) // loop through each table size
 	{
@@ -111,7 +119,7 @@ void Predictors::bimodial_single_bit()
 			int index = input.address % table_sizes[i];
 			tables[i][index] = initial_state_prediction;
 			
-			if(tables[i][index] == input.prediction)
+			if(tables[i][index] == input[j].prediction)
 				count++;
 		}
 
@@ -131,9 +139,16 @@ void Predictors::bimodial_double_bit()
 	int initial_state_prediction = 3; //TT
 	// 00 = 0 01 = 1 10 = 2 11 = 3
 
-	unsigned long long *table_sizes[] = new table_sizes(16, 32, 128, 256, 512, 1024, 2048);
+	int table_sizes[7] = {16, 32, 128, 256, 512, 1024, 2048};
 
-	unsigned long long *tables[][] = {int[16], int[32],	int[128], int[256], int[512], int[1024], int[2048]};
+	int* tables[7];
+	tables[0] = new int[16];
+	tables[1] = new int[32];
+	tables[2] = new int[128];
+	tables[3] = new int[256];
+	tables[4] = new int[512];
+	tables[5] = new int[1024];
+	tables[6] = new int[2048];
 
 	for (int i = 0; i < 7; i++) //loop through tables
 	{
@@ -142,27 +157,27 @@ void Predictors::bimodial_double_bit()
 			int index = input.address % table_sizes[i];
 			tables[i][index] = initial_state_prediction;
 
-			if(tables[i][index] > 1 && input.prediction == 1){       //correct
+			if(tables[i][index] > 1 && input[j].prediction == 1){       //correct
 				count++; 
 				if(tables[i][index] != 3)
 					tables[i][index]++;
 
-			}else if(tables[i][index] < 1 && input.prediction == 0){ //correct
+			}else if(tables[i][index] < 1 && input[j].prediction == 0){ //correct
 				count++;
 				if(tables[i][index] != 0)
 					tables[i][index]--;
 			
-			}else if(tables[i][index] < 1 && input.prediction == 1){ // wrong
+			}else if(tables[i][index] < 1 && input[j].prediction == 1){ // wrong
 				tables[i][index]++;
 
-			}else if(tables[i][index] > 1 && input.prediction == 0){ // wrong
+			}else if(tables[i][index] > 1 && input[j].prediction == 0){ // wrong
 				tables[i][index]--;
 			}	
 		}
 
 		_output temp;
 		temp.num_correct = count; 
-		temp.prediction = "Bimodial Single Bit";
+		temp.prediction = "Bimodial Double Bit";
 		output[i] = temp;
 
 		count = 0; //reset
