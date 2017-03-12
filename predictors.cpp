@@ -200,13 +200,13 @@ void Predictors::gshare()
 
 	global_history_register[0] = 0x0;   //3bit
 	global_history_register[1] = 0x0;   //4bit
-	global_history_register[2] = 0x00;  //5bit
-	global_history_register[3] = 0x00;  //6bit
-	global_history_register[4] = 0x00;  //7bit
-	global_history_register[5] = 0x00;  //8bit
-	global_history_register[6] = 0x000; //9bit
-	global_history_register[7] = 0x000; //10bit
-	global_history_register[8] = 0x000; //11bit
+	global_history_register[2] = 0x0;  //5bit
+	global_history_register[3] = 0x0;  //6bit
+	global_history_register[4] = 0x0;  //7bit
+	global_history_register[5] = 0x0;  //8bit
+	global_history_register[6] = 0x0; //9bit
+	global_history_register[7] = 0x0; //10bit
+	global_history_register[8] = 0x0; //11bit
 
 	for (int i = 0; i < 9; i++) //loop through GHR
 	{
@@ -217,14 +217,14 @@ void Predictors::gshare()
 		{
 			//branch address and the global history are hashed together
 			//mod size of table to grab appropriate number of bits
-			int index = ((input[j].address ^ global_history_register[i]) % 2048);
+			unsigned int index = ((input[j].address ^ global_history_register[i]) % 2048);
 
-			if(table[index] > 1 && input[j].prediction == 1){       //correct
+			if(table[index] >= 2 && input[j].prediction == 1){       //correct
 				count++; 
 				if(table[index] != 3)
 					table[index]++;
 
-			}else if(table[index] < 2 && input[j].prediction == 0){ //correct
+			}else if(table[index] <= 1 && input[j].prediction == 0){ //correct
 				count++;
 				if(table[index] != 0)
 					table[index]--;
@@ -267,14 +267,14 @@ void Predictors::tournament()
 	global_history_register[8] = 0x000; //11bit
 
 	for(int j = 0; j < 2048; j++) //set each to initial
-		bimodial_tables[j] = initial_state_prediction; 
+		bimodial_table[j] = initial_state_prediction; 
 
 	//set up bimodial
 	for(unsigned long long j = 0; j < input.size(); j++)
 	{
 		int index = input[j].address % 2048;
 		
-		if(bimodial_tables[index] == 1 && input[j].prediction == 0)
+		if(bimodial_table[index] == 1 && input[j].prediction == 0)
 			bimodial_table[index]--;
 		else if(bimodial_table[index] == 0 && input[j].prediction == 1)
 			bimodial_table[index]++;
@@ -292,27 +292,28 @@ void Predictors::tournament()
 			//mod size of table to grab appropriate number of bits
 			int index = ((input[j].address ^ global_history_register[i]) % 2048);
 
-			if(table[index] > 1 && input[j].prediction == 1){       //correct
-				if(table[index] != 3)
-					table[index]++;
+			if(gshare_table[index] > 1 && input[j].prediction == 1){       //correct
+				if(gshare_table[index] != 3)
+					gshare_table[index]++;
 
-			}else if(table[index] < 2 && input[j].prediction == 0){ //correct
-				if(table[index] != 0)
-					table[index]--;
+			}else if(gshare_table[index] < 2 && input[j].prediction == 0){ //correct
+				if(gshare_table[index] != 0)
+					gshare_table[index]--;
 			
-			}else if(table[index] < 2 && input[j].prediction == 1){ // wrong
-				table[index]++;
+			}else if(gshare_table[index] < 2 && input[j].prediction == 1){ // wrong
+				gshare_table[index]++;
 
-			}else if(table[index] > 1 && input[j].prediction == 0){ // wrong
-				table[index]--;
+			}else if(gshare_table[index] > 1 && input[j].prediction == 0){ // wrong
+				gshare_table[index]--;
 			}	
 		}
 	}
 
+
 	//compare predictions 
-	for(unsigned long long i = 0; i < input.size(); i++)
+	for(unsigned long long j = 0; j < input.size(); j++)
 	{
-		for(int j = 0; j < 2048; j++)
+		for(int i = 0; i < 2048; i++)
 		{
 			if(bimodial_table[i] == gshare_table[i])
 			{
@@ -350,10 +351,8 @@ void Predictors::tournament()
 					}
 				}
 			}
-
 		}
-	}
-
+	}	
 	out_put temp;
 	temp.num_correct = count; 
 	output.push_back(temp);

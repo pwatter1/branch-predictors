@@ -1,8 +1,9 @@
 /* Main.cpp */
 
+using namespace std;
+
 #include "predictors.h"
 
-using namespace std;
 #include <map>
 
 int main(int argc, char **argv)
