@@ -316,20 +316,43 @@ void Predictors::tournament()
 		{
 			if(bimodial_table[i] == gshare_table[i])
 			{
-				selector_table[i] = bimodial_table[i]; //take the value
-			}
-			else if(bimodial_table[i] != gshare_table[i])
-			{
 				if(bimodial_table[i] == input[i].prediction)
-					selector_table++; //shift to prefer bimodial
-				else if(gshare_table[i] == input[i].prediction)
-					selector_table--; //shift to prefer gshare
+					count++;
+			}
+			else
+			{
+				if(selector_table[i] == 2) //taking gshare
+				{
+					if(bimodial_table[i] == input[i].prediction)
+					{
+						count++;
+						if(selector_table[i] != 3)
+							selector_table[i]++; //shift to prefer bimodial
+					}
+					else
+					{
+						if(selector_table[i] != 0)	
+							selector_table[i]--;
+					}
+				}
+				else //taking bimodial
+				{
+					if(gshare_table[i] == input[i].prediction)
+					{
+						count++;
+						if(selector_table[i] != 3)
+							selector_table[i]++; //shift to prefer bimodial
+					}
+					else
+					{
+						if(selector_table[i] != 0)	
+							selector_table[i]--;
+					}
+				}
 			}
 
 		}
 	}
-
-
 
 	out_put temp;
 	temp.num_correct = count; 
