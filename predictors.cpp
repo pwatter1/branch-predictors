@@ -243,6 +243,84 @@ void Predictors::gshare()
 
 		count = 0; //reset
 	}
+}
+
+//selects between gshare and bimodial
+void Predictors::tournament()
+{
+	unsigned long long count = 0;
+	int initial_state_prediction = 3; //TT - (00) = 0 (01) = 1 (10) = 2 (11) = 3
+	int selector_representation = 3; //(0) prefer gshare (1) - weakly prefer ... (3) prefer bimodial
+	unsigned long long global_history_register[9]; //3bit to 11bit masks
+	int gshare_table[2048];
+	int bimodial_table[2048];
+	int selector_table[2048];
+
+	global_history_register[0] = 0x0;   //3bit
+	global_history_register[1] = 0x0;   //4bit
+	global_history_register[2] = 0x00;  //5bit
+	global_history_register[3] = 0x00;  //6bit
+	global_history_register[4] = 0x00;  //7bit
+	global_history_register[5] = 0x00;  //8bit
+	global_history_register[6] = 0x000; //9bit
+	global_history_register[7] = 0x000; //10bit
+	global_history_register[8] = 0x000; //11bit
+
+	for(int j = 0; j < 2048; j++) //set each to initial
+		bimodial_tables[j] = initial_state_prediction; 
+
+	//set up bimodial
+	for(unsigned long long j = 0; j < input.size(); j++)
+	{
+		int index = input[j].address % 2048;
+		
+		if(bimodial_tables[index] == 1 && input[j].prediction == 0)
+			bimodial_table[index]--;
+		else if(bimodial_table[index] == 0 && input[j].prediction == 1)
+			bimodial_table[index]++;
+	}		
+
+	//set up gshare
+	for (int i = 0; i < 9; i++) //loop through global history register
+	{
+		for(int j = 0; j < 2048; j++)
+			gshare_table[i] = initial_state_prediction; //set all to initial state
+
+		for(unsigned long long j = 0; j < input.size(); j++)
+		{
+			//branch address and the global history are hashed together
+			//mod size of table to grab appropriate number of bits
+			int index = ((input[j].address ^ global_history_register[i]) % 2048);
+
+			if(table[index] > 1 && input[j].prediction == 1){       //correct
+				if(table[index] != 3)
+					table[index]++;
+
+			}else if(table[index] < 2 && input[j].prediction == 0){ //correct
+				if(table[index] != 0)
+					table[index]--;
+			
+			}else if(table[index] < 2 && input[j].prediction == 1){ // wrong
+				table[index]++;
+
+			}else if(table[index] > 1 && input[j].prediction == 0){ // wrong
+				table[index]--;
+			}	
+		}
+	}
+
+	//compare predictions 
+	for(int i = 0; i < 2048; i++)
+	{
+		if(bimodial_table[i] == gshare_table[i])
+			selector_table[i] = bimodial_table[i];
+		else if()
+
+	}
 
 
+
+	out_put temp;
+	temp.num_correct = count; 
+	output.push_back(temp);
 }
