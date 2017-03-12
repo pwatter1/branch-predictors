@@ -250,7 +250,7 @@ void Predictors::tournament()
 {
 	unsigned long long count = 0;
 	int initial_state_prediction = 3; //TT - (00) = 0 (01) = 1 (10) = 2 (11) = 3
-	int selector_representation = 3; //(0) prefer gshare (1) - weakly prefer ... (3) prefer bimodial
+	int selector_representation = 0; //(0) prefer gshare (1) - weakly prefer ... (3) prefer bimodial
 	unsigned long long global_history_register[9]; //3bit to 11bit masks
 	int gshare_table[2048];
 	int bimodial_table[2048];
@@ -310,12 +310,23 @@ void Predictors::tournament()
 	}
 
 	//compare predictions 
-	for(int i = 0; i < 2048; i++)
+	for(unsigned long long i = 0; i < input.size(); i++)
 	{
-		if(bimodial_table[i] == gshare_table[i])
-			selector_table[i] = bimodial_table[i];
-		else if()
+		for(int j = 0; j < 2048; j++)
+		{
+			if(bimodial_table[i] == gshare_table[i])
+			{
+				selector_table[i] = bimodial_table[i]; //take the value
+			}
+			else if(bimodial_table[i] != gshare_table[i])
+			{
+				if(bimodial_table[i] == input[i].prediction)
+					selector_table++; //shift to prefer bimodial
+				else if(gshare_table[i] == input[i].prediction)
+					selector_table--; //shift to prefer gshare
+			}
 
+		}
 	}
 
 
