@@ -1,10 +1,7 @@
 all: predictors
 
-predictors: predictors.o 
-	g++ -g predictors.o -o predictors
-
-predictors.o: main.cpp predictors.cpp predictors.h
-	g++ -c main.cpp predictors.cpp -o predictors.o
+predictors: main.cpp predictors.cpp 
+	g++ main.cpp predictors.cpp -o predictors
 
 clean:
 	rm predictors.o predictors
