@@ -243,7 +243,7 @@ void Predictors::tournament()
 	int sizes[9] = {pow(2,3)-1,pow(2,4)-1,pow(2,5)-1, pow(2,6)-1,
 					pow(2,7)-1,pow(2,8)-1,pow(2,9)-1, pow(2,10)-1, pow(2,11)-1}; //bits
 	
-	
+
 	vector<unsigned int> gshare_table (2048, 3);
 	vector<unsigned int> bimodal_table (2048, 3);
 	vector<unsigned int> tournament_table (2048, 3);
@@ -255,32 +255,25 @@ void Predictors::tournament()
 			int tIndex = input[i].address % 2048;
 			int bIndex = input[i].address % 2048;
 			int gIndex = (input[i].address ^ (global_history_register[j] & sizes[j])) % 2048;
-			
-			unsigned int bState = bimodal_table[bIndex];	
-			unsigned int gState = gshare_table[gIndex];
-			unsigned int tState = tournament_table[tIndex];
 
-			unsigned int bimodalPredictedValue = bState & 2;
-			unsigned int gsharePredictedValue  = gState & 2;
+			unsigned int bimodalPredictedValue = bimodal_table[bIndex] & 2;
+			unsigned int gsharePredictedValue  = gshare_table[gIndex] & 2;
 
 			if(input[i].prediction == 1){
-				if(gState != 3)
-					gState++;
-				if(bState != 3)
-					bState++;
+				if(gshare_table[gIndex] != 3)
+					gshare_table[gIndex]++;
+				if(bimodal_table[bIndex] != 3)
+					bimodal_table[bIndex]++;
 			
 			}else{
-				if(gState != 0)
-					gState--;
-				if(bState != 0)
-					bState--;
+				if(gshare_table[gIndex] != 0)
+					gshare_table[gIndex]--;
+				if(bimodal_table[bIndex] != 0)
+					bimodal_table[bIndex]--;
 			}
 			
 			global_history_register[j] <<= 1;
 			global_history_register[j] |= input[i].prediction;
-
-			gshare_table[gIndex] = gState;
-			bimodal_table[bIndex] = bState;
 			
 			if(gsharePredictedValue == bimodalPredictedValue){
 				if((input[i].prediction << 1) == gsharePredictedValue){
@@ -290,16 +283,16 @@ void Predictors::tournament()
 			else
 			{
 				//chose gshare prediction
-				if((tState & 2) == 2){
+				if((tournament_table[tIndex] & 2) == 2){
 					if((input[i].prediction << 1) == gsharePredictedValue){
 						count++;
 						
-						if(tState != 3)
-							tState++;
+						if(tournament_table[tIndex] != 3)
+							tournament_table[tIndex]++;
 					}
 					else{
-						if(tState != 0)
-							tState--;
+						if(tournament_table[tIndex] != 0)
+							tournament_table[tIndex]--;
 					}
 				}
 				//chose bimodal prediction
@@ -307,16 +300,15 @@ void Predictors::tournament()
 				{
 					if((input[i].prediction << 1) == bimodalPredictedValue){
 						count++;
-						if(tState != 0)
-							tState--;
+						if(tournament_table[tIndex]!= 0)
+							tournament_table[tIndex]--;
 					}
 					else{
-						if(tState != 3)
-							tState++;
+						if(tournament_table[tIndex] != 3)
+							tournament_table[tIndex]++;
 					}
 				}
 			}
-			tournament_table[tIndex] = tState;
 		}
 
 		out_put temp;

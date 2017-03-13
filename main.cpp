@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 	predictor.bimodial_single_bit();
 	predictor.bimodial_double_bit();
 	predictor.gshare();
-	//predictor.tournament();
+	predictor.tournament();
 
 	predictor.write_file(argv[2]);
 
