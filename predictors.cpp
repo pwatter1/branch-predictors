@@ -196,7 +196,8 @@ void Predictors::gshare()
 	unsigned long long count = 0;
 	vector<unsigned int> table (2048, 3);
 	int global_history_register[9] = {0,0,0,0,0,0,0,0,0}; //3bit to 11bit masks
-	int sizes[9] = {3,4,5,6,7,8,9,10,11}; //bits
+	int sizes[9] = {pow(2,3)-1,pow(2,4)-1,pow(2,5)-1, pow(2,6)-1,
+					pow(2,7)-1,pow(2,8)-1,pow(2,9)-1, pow(2,10)-1, pow(2,11)-1}; //bits
 	
 	for (int i = 0; i < 9; i++) //loop through GHRs
 	{
@@ -238,8 +239,11 @@ void Predictors::tournament()
 	unsigned long long count = 0;
 	int selector_representation = 0; //(0) prefer gshare (1) - weakly prefer ... (3) prefer bimodial
 	unsigned long long global_history_register[9]; //3bit to 11bit masks
-	int sizes[9] = {3,4,5,6,7,8,9,10,11};
-
+	//int sizes[9] = {3,4,5,6,7,8,9,10,11};
+	int sizes[9] = {pow(2,3)-1,pow(2,4)-1,pow(2,5)-1, pow(2,6)-1,
+					pow(2,7)-1,pow(2,8)-1,pow(2,9)-1, pow(2,10)-1, pow(2,11)-1}; //bits
+	
+	
 	vector<unsigned int> gshare_table (2048, 3);
 	vector<unsigned int> bimodal_table (2048, 3);
 	vector<unsigned int> tournament_table (2048, 3);
