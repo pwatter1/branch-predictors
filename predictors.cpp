@@ -194,27 +194,20 @@ void Predictors::bimodial_double_bit()
 void Predictors::gshare()
 {
 	unsigned long long count = 0;
-	int initial_state_prediction = 3; //TT - (00) = 0 (01) = 1 (10) = 2 (11) = 3
-	int table[2048];
-	unsigned long long global_history_register[9]; //3bit to 11bit masks
+	vector<unsigned int> table (2048, 3);
+	int global_history_register[9] = {0,0,0,0,0,0,0,0,0}; //3bit to 11bit masks
 	int sizes[9] = {3,4,5,6,7,8,9,10,11}; //bits
-	
-	for(int i = 0; i < 9; i++)
-		global_history_register[i] = 0x0;
 	
 	for (int i = 0; i < 9; i++) //loop through GHRs
 	{
-		for(int j = 0; j < 2048; j++)
-			table[i] = initial_state_prediction; //set all to initial state
-
 		for(unsigned long long j = 0; j < input.size(); j++)
 		{
 			//branch address and the global history are hashed together
 			//mod size of table to grab appropriate number of bits
-			unsigned int grSize = (int) pow(2, sizes[i]) - 1;
-			unsigned int index = ((input[j].address ^ (global_history_register[i] & grSize)) % 2048);
+		
+			int index = ((input[j].address ^ (global_history_register[i] & sizes[i])) % 2048);
 
-			if((table[index] & 2) == (input[j].prediction << 1))     //correct
+			if((table[index] & 2) == (input[j].prediction << 1)) //correct
 				count++;
 			if(input[j].prediction == 1){
 				if(table[index] != 3)
@@ -243,106 +236,88 @@ void Predictors::gshare()
 void Predictors::tournament()
 {
 	unsigned long long count = 0;
-	int initial_state_prediction = 3; //TT - (00) = 0 (01) = 1 (10) = 2 (11) = 3
 	int selector_representation = 0; //(0) prefer gshare (1) - weakly prefer ... (3) prefer bimodial
 	unsigned long long global_history_register[9]; //3bit to 11bit masks
-	int sizes[9] = {3,4,5,6,7,8,9,10,11}; //bits
-	int gshare_table[2048];
-	int bimodial_table[2048];
-	int selector_table[2048];
+	int sizes[9] = {3,4,5,6,7,8,9,10,11};
 
-	for(int j = 0; j < 2048; j++) //set each to initial
-		bimodial_table[j] = initial_state_prediction; 
+	vector<unsigned int> gshare_table (2048, 3);
+	vector<unsigned int> bimodal_table (2048, 3);
+	vector<unsigned int> tournament_table (2048, 3);
 
-	//set up bimodial
-	for(unsigned long long j = 0; j < input.size(); j++)
+	for(int j = 0; j < 9; j++)
 	{
-		int index = input[j].address % 2048;
-		
-		if(bimodial_table[index] == 1 && input[j].prediction == 0)
-			bimodial_table[index]--;
-		else if(bimodial_table[index] == 0 && input[j].prediction == 1)
-			bimodial_table[index]++;
-	}		
-
-
-	//set up gshare
-	for (int i = 0; i < 9; i++) //loop through global history register
-	{
-		global_history_register[i] = 0x0;
-		
-		for(int j = 0; j < 2048; j++)
-			gshare_table[i] = initial_state_prediction; //set all to initial state
-
-		for(unsigned long long j = 0; j < input.size(); j++)
+		for(unsigned int i = 0; i < input.size(); i++)
 		{
-			//branch address and the global history are hashed together
-			//mod size of table to grab appropriate number of bits
-			int index = ((input[j].address ^ global_history_register[i]) % 2048);
-
-			if(gshare_table[index] > 1 && input[j].prediction == 1){       //correct
-				if(gshare_table[index] != 3)
-					gshare_table[index]++;
-
-			}else if(gshare_table[index] < 2 && input[j].prediction == 0){ //correct
-				if(gshare_table[index] != 0)
-					gshare_table[index]--;
+			int tIndex = input[i].address % 2048;
+			int bIndex = input[i].address % 2048;
+			int gIndex = (input[i].address ^ (global_history_register[j] & sizes[j])) % 2048;
 			
-			}else if(gshare_table[index] < 2 && input[j].prediction == 1){ // wrong
-				gshare_table[index]++;
+			unsigned int bState = bimodal_table[bIndex];	
+			unsigned int gState = gshare_table[gIndex];
+			unsigned int tState = tournament_table[tIndex];
 
-			}else if(gshare_table[index] > 1 && input[j].prediction == 0){ // wrong
-				gshare_table[index]--;
-			}	
-		}
-	}
+			unsigned int bimodalPredictedValue = bState & 2;
+			unsigned int gsharePredictedValue  = gState & 2;
 
+			if(input[i].prediction == 1){
+				if(gState != 3)
+					gState++;
+				if(bState != 3)
+					bState++;
+			
+			}else{
+				if(gState != 0)
+					gState--;
+				if(bState != 0)
+					bState--;
+			}
+			
+			global_history_register[j] <<= 1;
+			global_history_register[j] |= input[i].prediction;
 
-	//compare predictions 
-	for(unsigned long long j = 0; j < input.size(); j++)
-	{
-		for(int i = 0; i < 2048; i++)
-		{
-			if(bimodial_table[i] == gshare_table[i])
-			{
-				if(bimodial_table[i] == input[i].prediction)
+			gshare_table[gIndex] = gState;
+			bimodal_table[bIndex] = bState;
+			
+			if(gsharePredictedValue == bimodalPredictedValue){
+				if((input[i].prediction << 1) == gsharePredictedValue){
 					count++;
+				}
 			}
 			else
 			{
-				if(selector_table[i] == 2) //taking gshare
-				{
-					if(bimodial_table[i] == input[i].prediction)
-					{
+				//chose gshare prediction
+				if((tState & 2) == 2){
+					if((input[i].prediction << 1) == gsharePredictedValue){
 						count++;
-						if(selector_table[i] != 3)
-							selector_table[i]++; //shift to prefer bimodial
+						
+						if(tState != 3)
+							tState++;
 					}
-					else
-					{
-						if(selector_table[i] != 0)	
-							selector_table[i]--;
+					else{
+						if(tState != 0)
+							tState--;
 					}
 				}
-				else //taking bimodial
+				//chose bimodal prediction
+				else
 				{
-					if(gshare_table[i] == input[i].prediction)
-					{
+					if((input[i].prediction << 1) == bimodalPredictedValue){
 						count++;
-						if(selector_table[i] != 3)
-							selector_table[i]++; //shift to prefer bimodial
+						if(tState != 0)
+							tState--;
 					}
-					else
-					{
-						if(selector_table[i] != 0)	
-							selector_table[i]--;
+					else{
+						if(tState != 3)
+							tState++;
 					}
 				}
 			}
+			tournament_table[tIndex] = tState;
 		}
-	}	
 
-	out_put temp;
-	temp.num_correct = count; 
-	output.push_back(temp);
+		out_put temp;
+		temp.num_correct = count; 
+		output.push_back(temp);
+		count = 0;
+	}
 }
